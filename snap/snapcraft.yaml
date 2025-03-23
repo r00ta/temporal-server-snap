@@ -8,6 +8,11 @@ grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict  # use 'strict' once you have the right plugs and slots
 base: core24
 
+platforms:
+  amd64:
+    build-on: [amd64]
+    build-for: [amd64]
+
 apps:
   temporal-server:
     daemon: simple
