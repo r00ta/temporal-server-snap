@@ -1,0 +1,4 @@
+#!/bin/bash -e
+
+exec "$SNAP/bin/temporal-server" -e production -r "$SNAP_DATA/" -c "" start
+

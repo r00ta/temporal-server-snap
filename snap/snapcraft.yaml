@@ -1,0 +1,44 @@
+name: temporal-server
+version: '1.27.1'
+summary: Temporal server
+description: |
+  Temporal server as a snap.
+
+grade: stable # must be 'stable' to release into candidate/stable channels
+confinement: strict  # use 'strict' once you have the right plugs and slots
+base: core24
+
+apps:
+  temporal-server:
+    daemon: simple
+    command: bin/run-temporal
+    plugs: [home, network, network-bind]
+
+  temporal-sql-tool:
+    command: bin/temporal-sql-tool
+    plugs: [home, network]
+
+parts:
+  temporal:
+    plugin: nil
+    source: https://github.com/temporalio/temporal/releases/download/v1.27.1/temporal_1.27.1_linux_amd64.tar.gz
+    source-checksum: sha256/8df9570b806e6eb447ad06498581fbe5b2b3cb624b18768f32c18a14f38e6832
+    override-pull: |
+      set -eux
+      craftctl default
+      mkdir -p $CRAFT_PART_INSTALL/bin
+      mv temporal-server $CRAFT_PART_INSTALL/bin
+      mv temporal-sql-tool $CRAFT_PART_INSTALL/bin 
+      mkdir $CRAFT_PART_INSTALL/etc/
+      mv config $CRAFT_PART_INSTALL/etc/
+    stage:
+      - bin/temporal-server
+      - bin/temporal-sql-tool
+      - etc/config
+    prime:
+      - bin/temporal-server
+      - bin/temporal-sql-tool
+      - etc/config
+  tree:
+    plugin: dump
+    source: snap/local/tree
