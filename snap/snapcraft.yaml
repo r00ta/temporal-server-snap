@@ -19,8 +19,8 @@ apps:
     command: bin/run-temporal
     plugs: [home, network, network-bind]
 
-  temporal-sql-tool:
-    command: bin/temporal-sql-tool
+  init-postgres:
+    command: bin/init-postgres
     plugs: [home, network]
 
 parts:
@@ -44,6 +44,18 @@ parts:
       - bin/temporal-server
       - bin/temporal-sql-tool
       - etc/config
+  temporal-schema:
+    plugin: nil
+    source: https://github.com/temporalio/temporal/archive/refs/tags/v1.27.1.tar.gz
+    override-pull: |
+      set -eux
+      craftctl default
+      mkdir -p $CRAFT_PART_INSTALL/usr/share/temporal-server/
+      mv schema $CRAFT_PART_INSTALL/usr/share/temporal-server/
+    stage:
+      - usr/share/temporal-server/schema
+    prime:
+      - usr/share/temporal-server/schema
   tree:
     plugin: dump
     source: snap/local/tree

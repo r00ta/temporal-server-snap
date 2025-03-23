@@ -1,0 +1,73 @@
+#!/bin/bash -e
+
+SQL_HOST=${SQL_HOST:-"127.0.0.1"}
+SQL_PORT=${SQL_PORT:-5432}
+SQL_USER=${SQL_USER:-"postgres"}
+SQL_PASSWORD=${SQL_PASSWORD:-""}
+
+usage() {
+    echo "Usage: $(basename "$0") <command> [options]"
+    echo "Options:"
+    echo "  --host <hostname>       SQL host (default: $SQL_HOST)"
+    echo "  --port <port>           SQL port (default: $SQL_PORT)"
+    echo "  --user <username>       SQL user (default: $SQL_USER)"
+    echo "  --password <password>   SQL password"
+    exit 1
+}
+
+if [ $# -lt 1 ]; then
+    usage
+fi
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --host)
+            SQL_HOST="$2"; shift 2;;
+        --port)
+            SQL_PORT="$2"; shift 2;;
+        --user)
+            SQL_USER="$2"; shift 2;;
+        --password)
+            SQL_PASSWORD="$2"; shift 2;;
+        *)
+            echo "Unknown option: $1"; usage;;
+    esac
+done
+
+# Execute commands
+echo "Creating temporal database.."
+"${SNAP}/bin/temporal-sql-tool" --endpoint "$SQL_HOST" --port "$SQL_PORT" --user "$SQL_USER" --password "$SQL_PASSWORD" --database temporal --plugin postgres12 create-database
+
+echo "Setting up temporal schema.."
+"${SNAP}/bin/temporal-sql-tool" --endpoint "$SQL_HOST" --port "$SQL_PORT" --user "$SQL_USER" --password "$SQL_PASSWORD" --database temporal --plugin postgres12 setup-schema -v 0.0
+
+echo "Applying migrations.."
+"${SNAP}/bin/temporal-sql-tool" --endpoint "$SQL_HOST" --port "$SQL_PORT" --user "$SQL_USER" --password "$SQL_PASSWORD" --database temporal --plugin postgres12 update --schema-dir "${SNAP}/usr/share/temporal-server/schema/postgresql/v12/temporal/versioned"
+
+echo "Creating temporal-visibility database.."
+"${SNAP}/bin/temporal-sql-tool" --endpoint "$SQL_HOST" --port "$SQL_PORT" --user "$SQL_USER" --password "$SQL_PASSWORD" --database temporal-visibility --plugin postgres12 create-database
+
+echo "Setting up temporal-visibility schema.."
+"${SNAP}/bin/temporal-sql-tool" --endpoint "$SQL_HOST" --port "$SQL_PORT" --user "$SQL_USER" --password "$SQL_PASSWORD" --database temporal-visibility --plugin postgres12 setup-schema -v 0.0
+
+echo "Applying migrations.."
+"${SNAP}/bin/temporal-sql-tool" --endpoint "$SQL_HOST" --port "$SQL_PORT" --user "$SQL_USER" --password "$SQL_PASSWORD" --database temporal-visibility --plugin postgres12 update --schema-dir "${SNAP}/usr/share/temporal-server/schema/postgresql/v12/visibility/versioned"
+
+if [ -f "${SNAP_COMMON}/config/production.yaml" ]; then
+    echo "Configuration file already exists at ${SNAP_COMMON}/config/production.yaml. Skipping setup."
+    exit 0
+fi
+
+echo "Crafting production.yaml default config at ${SNAP_COMMON}/config/production.yaml.."
+mkdir -p "${SNAP_COMMON}/config/"
+cp "${SNAP}/usr/share/temporal-server/config/development-postgres12.yaml" "${SNAP_COMMON}/config/production.yaml"
+sed -i "s|user: \".*\"|user: \"$SQL_USER\"|g" "${SNAP_COMMON}/config/production.yaml"
+sed -i "s|password: \".*\"|password: \"$SQL_PASSWORD\"|g" "${SNAP_COMMON}/config/production.yaml"
+sed -i "s|databaseName: \"temporal\"|databaseName: temporal|g" "${SNAP_COMMON}/config/production.yaml"
+sed -i "s|databaseName: \"temporal_visibility\"|databaseName: temporal-visibility|g" "${SNAP_COMMON}/config/production.yaml"
+sed -i "s|connectAddr: \".*\"|connectAddr: \"$SQL_HOST:$SQL_PORT\"|g" "${SNAP_COMMON}/config/production.yaml"
+sed -i "s|filepath: \".*\"|filepath: \"$SNAP_COMMON/config/production-dynamic.yaml\"|g" "${SNAP_COMMON}/config/production.yaml"
+
+echo "Crafting production-dynamic.yaml default config at ${SNAP_COMMON}/config/production-dynamic.yaml.."
+cp "${SNAP}/usr/share/temporal-server/config/dynamicconfig/development-sql.yaml" "${SNAP_COMMON}/config/production-dynamic.yaml"
+
