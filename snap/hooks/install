@@ -1,0 +1,27 @@
+#!/bin/bash -e
+
+CONFIG_FILE="${SNAP_COMMON}/config/connection.yaml"
+
+if [ -f "$CONFIG_FILE" ]; then
+    echo "Connection file found. Running schema update..."
+    
+    # Load configuration values from the YAML file
+    SQL_HOST=$(grep 'host:' "$CONFIG_FILE" | awk '{print $2}' | tr -d '"')
+    SQL_PORT=$(grep 'port:' "$CONFIG_FILE" | awk '{print $2}')
+    SQL_USER=$(grep 'user:' "$CONFIG_FILE" | awk '{print $2}' | tr -d '"')
+    SQL_PASSWORD=$(grep 'password:' "$CONFIG_FILE" | awk '{print $2}' | tr -d '"')
+    PLUGIN=$(grep 'plugin:' "$CONFIG_FILE" | awk '{print $2}' | tr -d '"')
+    
+    # Execute the update command
+    "${SNAP}/bin/temporal-sql-tool" --endpoint "$SQL_HOST" --port "$SQL_PORT" --user "$SQL_USER" --password "$SQL_PASSWORD" \
+        --database temporal --plugin "$PLUGIN" update \
+        --schema-dir "${SNAP}/usr/share/temporal-server/schema/postgresql/v12/visibility/versioned"
+    
+    "${SNAP}/bin/temporal-sql-tool" --endpoint "$SQL_HOST" --port "$SQL_PORT" --user "$SQL_USER" --password "$SQL_PASSWORD" \
+        --database temporal --plugin "$PLUGIN" update \
+        --schema-dir "${SNAP}/usr/share/temporal-server/schema/postgresql/v12/visibility/versioned"
+    
+    echo "Schema update completed."
+else
+    echo "Connection file not found. Skipping schema update."
+fi

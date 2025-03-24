@@ -71,3 +71,18 @@ sed -i "s|filepath: \".*\"|filepath: \"$SNAP_COMMON/config/production-dynamic.ya
 echo "Crafting production-dynamic.yaml default config at ${SNAP_COMMON}/config/production-dynamic.yaml.."
 cp "${SNAP}/usr/share/temporal-server/config/dynamicconfig/development-sql.yaml" "${SNAP_COMMON}/config/production-dynamic.yaml"
 
+echo "Storing database credentials in ${SNAP_COMMON}/config/connection.yaml to apply migration automatically when the snap is refreshed to a newer version"
+
+cat <<EOF > "${SNAP_COMMON}/config/connection.yaml"
+sql:
+  host: "$SQL_HOST"
+  port: $SQL_PORT
+  user: "$SQL_USER"
+  password: "$SQL_PASSWORD"
+  plugin: "postgres12"
+EOF
+
+chmod 600 "${SNAP_COMMON}/config/connection.yaml"
+
+echo "Setup complete."
+
