@@ -10,5 +10,10 @@ sudo snap install temporal-server
 
 ## Configure
 
-You just need to store the temporal configuration to `/var/snap/temporal-server/common/production.yaml` and the dynamic config as well.
+You just need to store the temporal configuration to `/var/snap/temporal-server/common/config/production.yaml` and the dynamic config as well. Some utilities to craft the initial configuration are provided as follows
 
+### Postgres
+
+```bash
+sudo temporal-server.init-postgres --host <host> --port <port> --user <user> --password <password>
+```
