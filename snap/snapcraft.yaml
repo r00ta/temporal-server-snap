@@ -23,6 +23,11 @@ apps:
     command: bin/init-postgres
     plugs: [home, network]
 
+
+  init-sqlite:
+    command: bin/init-sqlite
+    plugs: [home, network]
+
 parts:
   temporal:
     plugin: nil
@@ -34,7 +39,7 @@ parts:
       mkdir -p $CRAFT_PART_INSTALL/bin
       mv temporal-server $CRAFT_PART_INSTALL/bin
       mv temporal-sql-tool $CRAFT_PART_INSTALL/bin 
-      mkdir $CRAFT_PART_INSTALL/usr/share/temporal-server/
+      mkdir -p $CRAFT_PART_INSTALL/usr/share/temporal-server/
       mv config $CRAFT_PART_INSTALL/usr/share/temporal-server/
     stage:
       - bin/temporal-server

@@ -17,3 +17,9 @@ You just need to store the temporal configuration to `/var/snap/temporal-server/
 ```bash
 sudo temporal-server.init-postgres --host <host> --port <port> --user <user> --password <password>
 ```
+
+### SQLite
+
+```bash
+sudo temporal-server.init-sqlite 
+```

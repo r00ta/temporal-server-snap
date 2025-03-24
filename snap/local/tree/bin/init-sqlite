@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+echo "Crafting production.yaml default config at ${SNAP_COMMON}/config/production.yaml.."
+mkdir -p "${SNAP_COMMON}/config/"
+cp "${SNAP}/usr/share/temporal-server/config/development-sqlite.yaml" "${SNAP_COMMON}/config/production.yaml"
+sed -i "s|filepath: \".*\"|filepath: \"$SNAP_COMMON/config/production-dynamic.yaml\"|g" "${SNAP_COMMON}/config/production.yaml"
+
+echo "Crafting production-dynamic.yaml default config at ${SNAP_COMMON}/config/production-dynamic.yaml.."
+cp "${SNAP}/usr/share/temporal-server/config/dynamicconfig/development-sql.yaml" "${SNAP_COMMON}/config/production-dynamic.yaml"
+
