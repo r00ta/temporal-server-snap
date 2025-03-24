@@ -34,16 +34,16 @@ parts:
       mkdir -p $CRAFT_PART_INSTALL/bin
       mv temporal-server $CRAFT_PART_INSTALL/bin
       mv temporal-sql-tool $CRAFT_PART_INSTALL/bin 
-      mkdir $CRAFT_PART_INSTALL/etc/
-      mv config $CRAFT_PART_INSTALL/etc/
+      mkdir $CRAFT_PART_INSTALL/usr/share/temporal-server/
+      mv config $CRAFT_PART_INSTALL/usr/share/temporal-server/
     stage:
       - bin/temporal-server
       - bin/temporal-sql-tool
-      - etc/config
+      - usr/share/temporal-server/config
     prime:
       - bin/temporal-server
       - bin/temporal-sql-tool
-      - etc/config
+      - usr/share/temporal-server/config
   temporal-schema:
     plugin: nil
     source: https://github.com/temporalio/temporal/archive/refs/tags/v1.27.1.tar.gz
