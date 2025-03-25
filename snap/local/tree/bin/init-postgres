@@ -67,9 +67,11 @@ sed -i "s|databaseName: \"temporal\"|databaseName: \"temporal\"|g" "${SNAP_COMMO
 sed -i "s|databaseName: \"temporal_visibility\"|databaseName: \"temporal-visibility\"|g" "${SNAP_COMMON}/config/production.yaml"
 sed -i "s|connectAddr: \".*\"|connectAddr: \"$SQL_HOST:$SQL_PORT\"|g" "${SNAP_COMMON}/config/production.yaml"
 sed -i "s|filepath: \".*\"|filepath: \"$SNAP_COMMON/config/production-dynamic.yaml\"|g" "${SNAP_COMMON}/config/production.yaml"
+chmod 600 "${SNAP_COMMON}/config/production.yaml"
 
 echo "Crafting production-dynamic.yaml default config at ${SNAP_COMMON}/config/production-dynamic.yaml.."
 cp "${SNAP}/usr/share/temporal-server/config/dynamicconfig/development-sql.yaml" "${SNAP_COMMON}/config/production-dynamic.yaml"
+chmod 600 "${SNAP_COMMON}/config/production-dynamic.yaml"
 
 echo "Storing database credentials in ${SNAP_COMMON}/config/connection.yaml to apply migration automatically when the snap is refreshed to a newer version"
 
