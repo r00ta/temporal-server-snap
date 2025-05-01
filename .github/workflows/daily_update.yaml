@@ -40,12 +40,12 @@ jobs:
       - name: Update snapcraft.yaml for temporal-server and temporal-schema
         run: |
           # Update temporal-server part
-          sed -i "s|version: '.*'|version: '${LATEST_VERSION}'|" snapcraft.yaml
-          sed -i "s|source: https://.*temporal_${LATEST_VERSION}_linux_amd64.tar.gz|source: https://github.com/temporalio/temporal/releases/download/v${LATEST_VERSION}/temporal_${LATEST_VERSION}_linux_amd64.tar.gz|" snapcraft.yaml
-          sed -i "s|source-checksum: .*|source-checksum: sha256/${SOURCE_SHA256}|" snapcraft.yaml
+          sed -i "s|version: '.*'|version: '${LATEST_VERSION}'|" snap/snapcraft.yaml
+          sed -i "s|source: https://.*temporal_${LATEST_VERSION}_linux_amd64.tar.gz|source: https://github.com/temporalio/temporal/releases/download/v${LATEST_VERSION}/temporal_${LATEST_VERSION}_linux_amd64.tar.gz|" snap/snapcraft.yaml
+          sed -i "s|source-checksum: .*|source-checksum: sha256/${SOURCE_SHA256}|" snap/snapcraft.yaml
 
           # Update temporal-schema part
-          sed -i "s|source: https://.*v1.27.2.tar.gz|source: https://github.com/temporalio/temporal/archive/refs/tags/v${LATEST_VERSION}.tar.gz|" snapcraft.yaml
+          sed -i "s|source: https://.*v1.27.2.tar.gz|source: https://github.com/temporalio/temporal/archive/refs/tags/v${LATEST_VERSION}.tar.gz|" snap/snapcraft.yaml
 
 
       - name: Commit and push if changed
