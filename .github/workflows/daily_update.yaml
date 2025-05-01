@@ -1,0 +1,56 @@
+name: Daily Update Temporal Server Snapcraft YAML
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # Run daily at 03:00 UTC
+  workflow_dispatch:
+
+jobs:
+  update-snapcraft:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq curl
+
+      - name: Get latest version info
+        id: get_version
+        run: |
+          VERSION=$(curl -s https://api.github.com/repos/temporalio/temporal/releases/latest | jq -r .tag_name | sed 's/^v//')
+          echo "LATEST_VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Download checksums file
+        run: |
+          CHECKSUM_URL="https://github.com/temporalio/temporal/releases/download/v${LATEST_VERSION}/temporal_${LATEST_VERSION}_checksums.txt"
+          curl -L "$CHECKSUM_URL" -o checksums.txt
+
+      - name: Extract SHA256 for Linux AMD64
+        id: extract_sha
+        run: |
+          SHA256=$(grep "temporal_${LATEST_VERSION}_linux_amd64.tar.gz" checksums.txt | awk '{print $1}')
+          echo "SOURCE_SHA256=$SHA256" >> $GITHUB_ENV
+
+      - name: Update snapcraft.yaml
+        run: |
+          sed -i "s|version: '.*'|version: '${LATEST_VERSION}'|" snap/snapcraft.yaml
+          sed -i "s|source: https://.*|source: https://github.com/temporalio/temporal/releases/download/v${LATEST_VERSION}/temporal_${LATEST_VERSION}_linux_amd64.tar.gz|" snap/snapcraft.yaml
+          sed -i "s|source-checksum: .*|source-checksum: sha256/${SOURCE_SHA256}|" snap/snapcraft.yaml
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "example@users.noreply.github.com"
+          if ! git diff --quiet; then
+            git add snap/snapcraft.yaml
+            git commit -m "Update snapcraft.yaml for temporal-server to version ${LATEST_VERSION}"
+            git push origin main
+          else
+            echo "No changes to commit"
+          fi
