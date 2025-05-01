@@ -31,8 +31,8 @@ apps:
 parts:
   temporal:
     plugin: nil
-    source: https://github.com/temporalio/temporal/releases/download/v1.27.1/temporal_1.27.1_linux_amd64.tar.gz
-    source-checksum: sha256/8df9570b806e6eb447ad06498581fbe5b2b3cb624b18768f32c18a14f38e6832
+    source: https://github.com/temporalio/temporal/releases/download/v1.27.2/temporal_1.27.2_linux_amd64.tar.gz 
+    source-checksum: sha256/fb7ebcd1bd2811fcc422e9b0ce8f72c7f0fdf3b87ca5363c7f26efa168c4fd64
     override-pull: |
       set -eux
       craftctl default
@@ -51,7 +51,7 @@ parts:
       - usr/share/temporal-server/config
   temporal-schema:
     plugin: nil
-    source: https://github.com/temporalio/temporal/archive/refs/tags/v1.27.1.tar.gz
+    source: https://github.com/temporalio/temporal/archive/refs/tags/v1.27.2.tar.gz
     override-pull: |
       set -eux
       craftctl default
