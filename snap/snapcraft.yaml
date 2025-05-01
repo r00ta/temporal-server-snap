@@ -1,5 +1,5 @@
 name: temporal-server
-version: '1.27.1'
+version: '1.27.2'
 summary: Temporal server
 description: |
   Temporal server as a snap.
