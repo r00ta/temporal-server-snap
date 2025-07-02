@@ -41,7 +41,7 @@ jobs:
         run: |
           # Update temporal-server part
           sed -i "s|version: '.*'|version: '${LATEST_VERSION}'|" snap/snapcraft.yaml
-          sed -i "s|source: https://.*temporal_${LATEST_VERSION}_linux_amd64.tar.gz|source: https://github.com/temporalio/temporal/releases/download/v${LATEST_VERSION}/temporal_${LATEST_VERSION}_linux_amd64.tar.gz|" snap/snapcraft.yaml
+          sed -i "s|source: https://.*/temporal_[^/]*_linux_amd64.tar.gz|source: https://github.com/temporalio/temporal/releases/download/v${LATEST_VERSION}/temporal_${LATEST_VERSION}_linux_amd64.tar.gz|" snap/snapcraft.yaml
           sed -i "s|source-checksum: .*|source-checksum: sha256/${SOURCE_SHA256}|" snap/snapcraft.yaml
 
           # Update temporal-schema part
