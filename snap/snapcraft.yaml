@@ -1,5 +1,5 @@
 name: temporal-server
-version: '1.28.1'
+version: '1.29.0'
 summary: Temporal server
 description: |
   Temporal server as a snap.
@@ -31,8 +31,8 @@ apps:
 parts:
   temporal:
     plugin: nil
-    source: https://github.com/temporalio/temporal/releases/download/v1.28.1/temporal_1.28.1_linux_amd64.tar.gz 
-    source-checksum: sha256/b0427be65cac0859e84e7db65674fc30bbf40f118722dd2b23d0ab33a07e797d
+    source: https://github.com/temporalio/temporal/releases/download/v1.29.0/temporal_1.29.0_linux_amd64.tar.gz 
+    source-checksum: sha256/5ac8314a8a738104f4c5f9a9fadebc2c81769ae351c4087bbcc960f5eef724fe
     override-pull: |
       set -eux
       craftctl default
