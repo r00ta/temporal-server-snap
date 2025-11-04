@@ -45,7 +45,7 @@ jobs:
           sed -i "s|source-checksum: .*|source-checksum: sha256/${SOURCE_SHA256}|" snap/snapcraft.yaml
 
           # Update temporal-schema part
-          sed -i "s|source: https://.*tags/v${LATEST_VERSION}.tar.gz|source: https://github.com/temporalio/temporal/archive/refs/tags/v${LATEST_VERSION}.tar.gz|" snap/snapcraft.yaml
+          sed -i "s|source: https://github.com/temporalio/temporal/archive/refs/tags/v[^/]*.tar.gz|source: https://github.com/temporalio/temporal/archive/refs/tags/v${LATEST_VERSION}.tar.gz|" snap/snapcraft.yaml
 
 
       - name: Commit and push if changed
