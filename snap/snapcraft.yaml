@@ -52,6 +52,7 @@ parts:
   temporal-schema:
     plugin: nil
     source: https://github.com/temporalio/temporal/archive/refs/tags/v1.29.1.tar.gz 
+    source-checksum: sha256/67cd88fac75f2b398eaf8c131403809121d745be9e957039751e8b391036b7a5
     override-pull: |
       set -eux
       craftctl default

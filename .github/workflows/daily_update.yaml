@@ -42,10 +42,16 @@ jobs:
           # Update temporal-server part
           sed -i "s|version: '.*'|version: '${LATEST_VERSION}'|" snap/snapcraft.yaml
           sed -i "s|source: https://.*/temporal_[^/]*_linux_amd64.tar.gz|source: https://github.com/temporalio/temporal/releases/download/v${LATEST_VERSION}/temporal_${LATEST_VERSION}_linux_amd64.tar.gz|" snap/snapcraft.yaml
-          sed -i "s|source-checksum: .*|source-checksum: sha256/${SOURCE_SHA256}|" snap/snapcraft.yaml
+          sed -i "s|source-checksum: sha256/[a-f0-9]*|source-checksum: sha256/${SOURCE_SHA256}|" snap/snapcraft.yaml
 
           # Update temporal-schema part
+          # Download and compute checksum for temporal-schema source tarball
+          SCHEMA_URL="https://github.com/temporalio/temporal/archive/refs/tags/v${LATEST_VERSION}.tar.gz"
+          SCHEMA_SHA256=$(curl -sL "$SCHEMA_URL" | sha256sum | awk '{print $1}')
+          
           sed -i "s|source: https://github.com/temporalio/temporal/archive/refs/tags/v[^/]*.tar.gz|source: https://github.com/temporalio/temporal/archive/refs/tags/v${LATEST_VERSION}.tar.gz|" snap/snapcraft.yaml
+          # Update or add the source-checksum line after the source line for temporal-schema
+          sed -i "/temporal-schema:/,/override-pull:/ s|source-checksum: sha256/[a-f0-9]*|source-checksum: sha256/${SCHEMA_SHA256}|" snap/snapcraft.yaml
 
 
       - name: Commit and push if changed
