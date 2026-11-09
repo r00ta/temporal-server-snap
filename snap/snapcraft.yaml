@@ -32,7 +32,7 @@ parts:
   temporal:
     plugin: nil
     source: https://github.com/temporalio/temporal/releases/download/v1.32.2/temporal_1.32.2_linux_amd64.tar.gz 
-    source-checksum: sha256/
+    source-checksum: sha256/6260f110b6853d2d7f8daa31793d1fac44096077e3b058dc3482de6ac50bc543
     override-pull: |
       set -eux
       craftctl default
